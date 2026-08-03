@@ -5,6 +5,7 @@
 
 #include <string>
 
+#include "cpu_stats.hpp"
 #include "imgui.h"
 #include "version.hpp"
 
@@ -23,6 +24,8 @@ class MainWindow {
     GLFWwindow* window;
     ImGuiIO* io;
     ImVec4 default_bg_color = ImVec4(0.10f, 0.10f, 0.12f, 1.00f);
+
+    CpuStats cpu_stats;
 };
 
 #endif  // MAIN_WINDOW_HPP

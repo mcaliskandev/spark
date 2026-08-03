@@ -36,6 +36,8 @@ void MainWindow::ProcessLoop() {
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
 
+        cpu_stats.Tick();
+
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
@@ -43,6 +45,13 @@ void MainWindow::ProcessLoop() {
         ImGui::Begin("Spark");
         ImGui::Text("System Monitor... Loading...");
         ImGui::Text("Version %s", SPARK_VERSION_STRING);
+
+        ImGui::Separator();
+        ImGui::Text("Total CPU: %.1f%%", cpu_stats.GetTotalUsage());
+        for (int i = 0; i < cpu_stats.GetCoreCount(); ++i) {
+            ImGui::Text("Core %d: %.1f%%", i, cpu_stats.GetCoreUsage(i));
+        }
+
         ImGui::End();
 
         ImGui::Render();
