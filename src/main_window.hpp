@@ -2,7 +2,10 @@
 
 #include <GLFW/glfw3.h>
 
+#include <string>
+
 #include "imgui.h"
+#include "version.hpp"
 
 class MainWindow {
    public:
@@ -14,7 +17,7 @@ class MainWindow {
    private:
     const int default_window_width = 1280;
     const int default_window_height = 720;
-    const char* window_title = "Spark - System Monitor";
+    const std::string window_title = "Spark - System Monitor v" SPARK_VERSION_STRING;
 
     GLFWwindow* window;
     ImGuiIO* io;

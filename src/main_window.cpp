@@ -8,7 +8,7 @@
 
 MainWindow::MainWindow() {
     window = glfwCreateWindow(default_window_width, default_window_height,
-                              window_title, nullptr, nullptr);
+                              window_title.c_str(), nullptr, nullptr);
     if (window == nullptr) {
         std::cerr << "Failed to create GLFW window. Stopping app.\n";
         throw std::runtime_error("Failed to create GLFW window");
@@ -42,6 +42,7 @@ void MainWindow::ProcessLoop() {
 
         ImGui::Begin("Spark");
         ImGui::Text("System Monitor... Loading...");
+        ImGui::Text("Version %s", SPARK_VERSION_STRING);
         ImGui::End();
 
         ImGui::Render();

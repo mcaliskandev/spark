@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(spark CXX)
+project(spark VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -9,6 +9,11 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(GLFW REQUIRED glfw3)
 
 set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/imgui-1.92.9b)
+
+configure_file(
+    ${CMAKE_SOURCE_DIR}/src/version.hpp.in
+    ${CMAKE_BINARY_DIR}/generated/version.hpp
+)
 
 add_executable(spark
     src/main.cpp
@@ -27,6 +32,7 @@ target_include_directories(spark PRIVATE
     ${IMGUI_DIR}
     ${IMGUI_DIR}/backends
     ${GLFW_INCLUDE_DIRS}
+    ${CMAKE_BINARY_DIR}/generated
 )
 
 target_link_libraries(spark PRIVATE
