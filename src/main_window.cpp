@@ -37,6 +37,7 @@ void MainWindow::ProcessLoop() {
         glfwPollEvents();
 
         cpu_stats.Tick();
+        ram_stats.Tick();
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -51,6 +52,11 @@ void MainWindow::ProcessLoop() {
         for (int i = 0; i < cpu_stats.GetCoreCount(); ++i) {
             ImGui::Text("Core %d: %.1f%%", i, cpu_stats.GetCoreUsage(i));
         }
+
+        ImGui::Separator();
+        ImGui::Text("RAM: %.1f%% (%.2f GB / %.2f GB)",
+                    ram_stats.GetUsagePercent(), ram_stats.GetUsedGB(),
+                    ram_stats.GetTotalGB());
 
         ImGui::End();
 

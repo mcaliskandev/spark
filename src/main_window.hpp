@@ -7,6 +7,7 @@
 
 #include "cpu_stats.hpp"
 #include "imgui.h"
+#include "ram_stats.hpp"
 #include "version.hpp"
 
 class MainWindow {
@@ -26,6 +27,7 @@ class MainWindow {
     ImVec4 default_bg_color = ImVec4(0.10f, 0.10f, 0.12f, 1.00f);
 
     CpuStats cpu_stats;
+    RamStats ram_stats;
 };
 
 #endif  // MAIN_WINDOW_HPP
