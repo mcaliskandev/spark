@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MAIN_WINDOW_HPP
+#define MAIN_WINDOW_HPP
 
 #include <GLFW/glfw3.h>
 
@@ -23,3 +24,5 @@ class MainWindow {
     ImGuiIO* io;
     ImVec4 default_bg_color = ImVec4(0.10f, 0.10f, 0.12f, 1.00f);
 };
+
+#endif  // MAIN_WINDOW_HPP
