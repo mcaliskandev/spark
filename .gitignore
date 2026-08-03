@@ -23,3 +23,7 @@ imgui.ini
 
 # OS
 .DS_Store
+
+# AI Agents
+.claude/
+ai/
