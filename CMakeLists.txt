@@ -1,0 +1,39 @@
+cmake_minimum_required(VERSION 3.16)
+project(spark CXX)
+
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(OpenGL REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GLFW REQUIRED glfw3)
+
+set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/imgui-1.92.9b)
+
+add_executable(spark
+    src/main.cpp
+    src/boot_imgui.cpp
+    src/main_window.cpp
+    ${IMGUI_DIR}/imgui.cpp
+    ${IMGUI_DIR}/imgui_demo.cpp
+    ${IMGUI_DIR}/imgui_draw.cpp
+    ${IMGUI_DIR}/imgui_tables.cpp
+    ${IMGUI_DIR}/imgui_widgets.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+)
+
+target_include_directories(spark PRIVATE
+    ${IMGUI_DIR}
+    ${IMGUI_DIR}/backends
+    ${GLFW_INCLUDE_DIRS}
+)
+
+target_link_libraries(spark PRIVATE
+    ${GLFW_LIBRARIES}
+    OpenGL::GL
+    dl
+    pthread
+)
+
+target_link_directories(spark PRIVATE ${GLFW_LIBRARY_DIRS})
