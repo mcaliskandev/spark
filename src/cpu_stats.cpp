@@ -74,6 +74,9 @@ bool CpuStats::Update() {
         per_core_cpu_usage_[i] = ComputeUsage(prev_times_[i], curr_times[i]);
     }
 
+    usage_history_[history_offset_] = total_cpu_usage_;
+    history_offset_ = (history_offset_ + 1) % kHistorySize;
+
     prev_times_ = curr_times;
     return true;
 }
@@ -85,3 +88,11 @@ const float CpuStats::GetCoreUsage(const int coreNumber) const {
 }
 
 int CpuStats::GetCoreCount() const { return total_core_number_; }
+
+const float* CpuStats::GetUsageHistory() const {
+    return usage_history_.data();
+}
+
+int CpuStats::GetHistorySize() const { return kHistorySize; }
+
+int CpuStats::GetHistoryOffset() const { return history_offset_; }

@@ -1,6 +1,7 @@
 #ifndef CPU_STATS_HPP
 #define CPU_STATS_HPP
 
+#include <array>
 #include <chrono>
 #include <vector>
 
@@ -11,6 +12,11 @@ class CpuStats {
     float GetTotalUsage() const;
     const float GetCoreUsage(const int coreNumber) const;
     int GetCoreCount() const;
+
+    static constexpr int kHistorySize = 120;
+    const float* GetUsageHistory() const;
+    int GetHistorySize() const;
+    int GetHistoryOffset() const;
 
    private:
     struct CpuTimes {
@@ -36,6 +42,9 @@ class CpuStats {
     float total_cpu_usage_ = 0.0f;
     std::vector<float> per_core_cpu_usage_;
     int total_core_number_{0};
+
+    std::array<float, kHistorySize> usage_history_{};
+    int history_offset_ = 0;
 
     std::vector<CpuTimes> prev_times_;
     std::chrono::steady_clock::time_point last_sample_time_;

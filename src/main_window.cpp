@@ -44,15 +44,10 @@ void MainWindow::ProcessLoop() {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        ImGui::SetNextWindowSize(ImVec2(400, 400), ImGuiCond_Once);
         ImGui::Begin("Spark");
         ImGui::Text("System Monitor... Loading...");
         ImGui::Text("Version %s", SPARK_VERSION_STRING);
-
-        ImGui::Separator();
-        ImGui::Text("Total CPU: %.1f%%", cpu_stats.GetTotalUsage());
-        for (int i = 0; i < cpu_stats.GetCoreCount(); ++i) {
-            ImGui::Text("Core %d: %.1f%%", i, cpu_stats.GetCoreUsage(i));
-        }
 
         ImGui::Separator();
         ImGui::Text("RAM: %.1f%% (%.2f GB / %.2f GB)",
@@ -64,6 +59,20 @@ void MainWindow::ProcessLoop() {
                     disk_stats.GetUsagePercent(), disk_stats.GetUsedGB(),
                     disk_stats.GetTotalGB());
 
+        ImGui::End();
+
+        ImGui::SetNextWindowSize(ImVec2(400, 400), ImGuiCond_Once);
+        ImGui::Begin("CPU Usage");
+        ImGui::PlotLines("##cpu_history", cpu_stats.GetUsageHistory(),
+                         cpu_stats.GetHistorySize(),
+                         cpu_stats.GetHistoryOffset(), nullptr, 0.0f, 100.0f,
+                         ImVec2(400, 120));
+
+        ImGui::Separator();
+        ImGui::Text("Total CPU: %.1f%%", cpu_stats.GetTotalUsage());
+        for (int i = 0; i < cpu_stats.GetCoreCount(); ++i) {
+            ImGui::Text("Core %d: %.1f%%", i, cpu_stats.GetCoreUsage(i));
+        }
         ImGui::End();
 
         ImGui::Render();
