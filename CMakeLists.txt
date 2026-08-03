@@ -31,6 +31,7 @@ add_executable(spark
     src/main_window.cpp
     src/cpu_stats.cpp
     src/ram_stats.cpp
+    src/disk_stats.cpp
     ${IMGUI_DIR}/imgui.cpp
     ${IMGUI_DIR}/imgui_demo.cpp
     ${IMGUI_DIR}/imgui_draw.cpp

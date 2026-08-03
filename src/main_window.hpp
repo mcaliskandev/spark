@@ -6,6 +6,7 @@
 #include <string>
 
 #include "cpu_stats.hpp"
+#include "disk_stats.hpp"
 #include "imgui.h"
 #include "ram_stats.hpp"
 #include "version.hpp"
@@ -28,6 +29,7 @@ class MainWindow {
 
     CpuStats cpu_stats;
     RamStats ram_stats;
+    DiskStats disk_stats;
 };
 
 #endif  // MAIN_WINDOW_HPP

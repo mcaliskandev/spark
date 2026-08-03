@@ -38,6 +38,7 @@ void MainWindow::ProcessLoop() {
 
         cpu_stats.Tick();
         ram_stats.Tick();
+        disk_stats.Tick();
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -57,6 +58,11 @@ void MainWindow::ProcessLoop() {
         ImGui::Text("RAM: %.1f%% (%.2f GB / %.2f GB)",
                     ram_stats.GetUsagePercent(), ram_stats.GetUsedGB(),
                     ram_stats.GetTotalGB());
+
+        ImGui::Separator();
+        ImGui::Text("Disk: %.1f%% (%.2f GB / %.2f GB)",
+                    disk_stats.GetUsagePercent(), disk_stats.GetUsedGB(),
+                    disk_stats.GetTotalGB());
 
         ImGui::End();
 
