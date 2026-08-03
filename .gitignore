@@ -2,6 +2,9 @@
 build/
 cmake-build-*/
 
+# Fetched dependencies (retrieved by CMake FetchContent)
+imgui-1.92.9b/
+
 # CMake
 CMakeCache.txt
 CMakeFiles/
