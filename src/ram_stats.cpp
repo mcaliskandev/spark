@@ -52,6 +52,9 @@ bool RamStats::Update() {
     total_kb_ = mem_total_kb;
     used_kb_ = mem_total_kb - mem_available_kb;
 
+    usage_history_[history_offset_] = GetUsagePercent();
+    history_offset_ = (history_offset_ + 1) % kHistorySize;
+
     return true;
 }
 
@@ -72,3 +75,11 @@ double RamStats::GetTotalGB() const {
 double RamStats::GetUsedGB() const {
     return static_cast<double>(used_kb_) / (1024.0 * 1024.0);
 }
+
+const float* RamStats::GetUsageHistory() const {
+    return usage_history_.data();
+}
+
+int RamStats::GetHistorySize() const { return kHistorySize; }
+
+int RamStats::GetHistoryOffset() const { return history_offset_; }

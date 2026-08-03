@@ -50,11 +50,6 @@ void MainWindow::ProcessLoop() {
         ImGui::Text("Version %s", SPARK_VERSION_STRING);
 
         ImGui::Separator();
-        ImGui::Text("RAM: %.1f%% (%.2f GB / %.2f GB)",
-                    ram_stats.GetUsagePercent(), ram_stats.GetUsedGB(),
-                    ram_stats.GetTotalGB());
-
-        ImGui::Separator();
         ImGui::Text("Disk: %.1f%% (%.2f GB / %.2f GB)",
                     disk_stats.GetUsagePercent(), disk_stats.GetUsedGB(),
                     disk_stats.GetTotalGB());
@@ -73,6 +68,18 @@ void MainWindow::ProcessLoop() {
         for (int i = 0; i < cpu_stats.GetCoreCount(); ++i) {
             ImGui::Text("Core %d: %.1f%%", i, cpu_stats.GetCoreUsage(i));
         }
+        ImGui::End();
+
+        ImGui::SetNextWindowSize(ImVec2(400, 400), ImGuiCond_Once);
+        ImGui::Begin("RAM Usage");
+        ImGui::PlotLines("##ram_history", ram_stats.GetUsageHistory(),
+                         ram_stats.GetHistorySize(),
+                         ram_stats.GetHistoryOffset(), nullptr, 0.0f, 100.0f,
+                         ImVec2(400, 120));
+        ImGui::Separator();
+        ImGui::Text("RAM: %.1f%% (%.2f GB / %.2f GB)",
+                    ram_stats.GetUsagePercent(), ram_stats.GetUsedGB(),
+                    ram_stats.GetTotalGB());
         ImGui::End();
 
         ImGui::Render();

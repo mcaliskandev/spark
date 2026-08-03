@@ -1,6 +1,7 @@
 #ifndef RAM_STATS_HPP
 #define RAM_STATS_HPP
 
+#include <array>
 #include <chrono>
 
 class RamStats {
@@ -13,6 +14,11 @@ class RamStats {
     double GetTotalGB() const;
     double GetUsedGB() const;
 
+    static constexpr int kHistorySize = 120;
+    const float* GetUsageHistory() const;
+    int GetHistorySize() const;
+    int GetHistoryOffset() const;
+
    private:
     bool Update();
     bool ReadProcMeminfo(unsigned long long& mem_total_kb,
@@ -20,6 +26,9 @@ class RamStats {
 
     unsigned long long total_kb_ = 0;
     unsigned long long used_kb_ = 0;
+
+    std::array<float, kHistorySize> usage_history_{};
+    int history_offset_ = 0;
 
     std::chrono::steady_clock::time_point last_sample_time_;
     bool has_sampled_ = false;
