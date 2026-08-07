@@ -15,6 +15,8 @@ class MainWindow {
    public:
     MainWindow();
     ~MainWindow();
+    MainWindow(const MainWindow&) = delete;
+    MainWindow& operator=(const MainWindow&) = delete;
 
     void ProcessLoop();
 
