@@ -1,5 +1,6 @@
 #include "main_window.hpp"
 
+#include <cstdio>
 #include <iostream>
 #include <stdexcept>
 
@@ -101,6 +102,16 @@ void MainWindow::ProcessLoop() {
         cpu_stats.Tick();
         ram_stats.Tick();
         disk_stats.Tick();
+
+        const auto now = std::chrono::steady_clock::now();
+        if (now - last_tray_update >= tray_update_interval) {
+            char label[64];
+            std::snprintf(label, sizeof(label), "CPU : %%%.0f   RAM : %%%.0f",
+                          cpu_stats.GetTotalUsage(),
+                          ram_stats.GetUsagePercent());
+            tray_indicator.SetLabel(label);
+            last_tray_update = now;
+        }
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();

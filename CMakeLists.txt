@@ -8,6 +8,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(OpenGL REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GLFW REQUIRED glfw3)
+pkg_check_modules(GIO REQUIRED gio-2.0)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -41,6 +42,7 @@ add_executable(spark
     src/cpu_stats.cpp
     src/ram_stats.cpp
     src/disk_stats.cpp
+    src/tray_indicator.cpp
     ${IMGUI_DIR}/imgui.cpp
     ${IMGUI_DIR}/imgui_demo.cpp
     ${IMGUI_DIR}/imgui_draw.cpp
@@ -57,14 +59,17 @@ target_include_directories(spark PRIVATE
     ${IMGUI_DIR}/backends
     ${IMPLOT_DIR}
     ${GLFW_INCLUDE_DIRS}
+    ${GIO_INCLUDE_DIRS}
     ${CMAKE_BINARY_DIR}/generated
 )
 
 target_link_libraries(spark PRIVATE
     ${GLFW_LIBRARIES}
+    ${GIO_LIBRARIES}
     OpenGL::GL
     dl
     pthread
 )
 
-target_link_directories(spark PRIVATE ${GLFW_LIBRARY_DIRS})
+target_link_directories(spark PRIVATE ${GLFW_LIBRARY_DIRS} ${GIO_LIBRARY_DIRS})
+target_compile_options(spark PRIVATE ${GIO_CFLAGS_OTHER})
