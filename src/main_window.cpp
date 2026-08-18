@@ -5,6 +5,66 @@
 
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
+#include "implot.h"
+
+namespace {
+
+struct RingBufferHistory {
+    const float* values;
+    int size;
+    int offset;
+    double seconds_per_sample;
+};
+
+double SecondsAgo(const RingBufferHistory* history, int idx) {
+    return static_cast<double>(idx - (history->size - 1)) *
+           history->seconds_per_sample;
+}
+
+ImPlotPoint RingBufferGetter(int idx, void* user_data) {
+    const auto* history = static_cast<const RingBufferHistory*>(user_data);
+    const int i = (history->offset + idx) % history->size;
+    return ImPlotPoint(SecondsAgo(history, idx),
+                       static_cast<double>(history->values[i]));
+}
+
+ImPlotPoint BaselineGetter(int idx, void* user_data) {
+    const auto* history = static_cast<const RingBufferHistory*>(user_data);
+    return ImPlotPoint(SecondsAgo(history, idx), 0.0);
+}
+
+void DrawUsagePlot(const char* plot_id, const float* values, int size,
+                   int offset, double seconds_per_sample, const ImVec4& color) {
+    RingBufferHistory history{values, size, offset, seconds_per_sample};
+    const double window_seconds =
+        static_cast<double>(size - 1) * seconds_per_sample;
+
+    const ImVec4 fill_color(color.x, color.y, color.z, 0.35f);
+    const ImPlotSpec fill_spec(ImPlotProp_FillColor, fill_color,
+                               ImPlotProp_Flags, ImPlotItemFlags_NoLegend);
+    const ImPlotSpec line_spec(ImPlotProp_LineColor, color,
+                               ImPlotProp_LineWeight, 2.0f, ImPlotProp_Flags,
+                               ImPlotItemFlags_NoLegend);
+
+    if (ImPlot::BeginPlot(plot_id, ImVec2(-1, 240),
+                          ImPlotFlags_NoTitle | ImPlotFlags_NoMouseText |
+                              ImPlotFlags_NoInputs | ImPlotFlags_NoMenus |
+                              ImPlotFlags_NoBoxSelect)) {
+        ImPlot::SetupAxes("Seconds ago", nullptr, ImPlotAxisFlags_Lock,
+                          ImPlotAxisFlags_LockMin);
+        ImPlot::SetupAxisFormat(ImAxis_X1, "%.0fs");
+        ImPlot::SetupAxesLimits(-window_seconds, 0, 0, 100, ImPlotCond_Always);
+
+        ImPlot::PlotShadedG("##fill", RingBufferGetter, &history,
+                            BaselineGetter, &history, size, fill_spec);
+        ImPlot::PlotLineG("##line", RingBufferGetter, &history, size,
+                          line_spec);
+
+        ImPlot::EndPlot();
+    }
+}
+
+}  // namespace
 
 MainWindow::MainWindow() {
     window = glfwCreateWindow(default_window_width, default_window_height,
@@ -17,6 +77,7 @@ MainWindow::MainWindow() {
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
     ImGui::CreateContext();
+    ImPlot::CreateContext();
     io = &ImGui::GetIO();
     io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     ImGui::StyleColorsDark();
@@ -26,6 +87,7 @@ MainWindow::MainWindow() {
 MainWindow::~MainWindow() {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
+    ImPlot::DestroyContext();
     ImGui::DestroyContext();
 
     glfwDestroyWindow(window);
@@ -58,10 +120,9 @@ void MainWindow::ProcessLoop() {
 
         ImGui::SetNextWindowSize(ImVec2(400, 400), ImGuiCond_Once);
         ImGui::Begin("CPU Usage");
-        ImGui::PlotLines("##cpu_history", cpu_stats.GetUsageHistory(),
-                         cpu_stats.GetHistorySize(),
-                         cpu_stats.GetHistoryOffset(), nullptr, 0.0f, 100.0f,
-                         ImVec2(400, 120));
+        DrawUsagePlot("##cpu_plot", cpu_stats.GetUsageHistory(),
+                      cpu_stats.GetHistorySize(), cpu_stats.GetHistoryOffset(),
+                      0.5, ImVec4(0.26f, 0.59f, 0.98f, 1.00f));
 
         ImGui::Separator();
         ImGui::Text("Total CPU: %.1f%%", cpu_stats.GetTotalUsage());
@@ -72,10 +133,9 @@ void MainWindow::ProcessLoop() {
 
         ImGui::SetNextWindowSize(ImVec2(400, 400), ImGuiCond_Once);
         ImGui::Begin("RAM Usage");
-        ImGui::PlotLines("##ram_history", ram_stats.GetUsageHistory(),
-                         ram_stats.GetHistorySize(),
-                         ram_stats.GetHistoryOffset(), nullptr, 0.0f, 100.0f,
-                         ImVec2(400, 120));
+        DrawUsagePlot("##ram_plot", ram_stats.GetUsageHistory(),
+                      ram_stats.GetHistorySize(), ram_stats.GetHistoryOffset(),
+                      0.5, ImVec4(0.20f, 0.80f, 0.55f, 1.00f));
         ImGui::Separator();
         ImGui::Text("RAM: %.1f%% (%.2f GB / %.2f GB)",
                     ram_stats.GetUsagePercent(), ram_stats.GetUsedGB(),

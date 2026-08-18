@@ -18,7 +18,16 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(imgui)
 
+FetchContent_Declare(
+    implot
+    GIT_REPOSITORY https://github.com/epezent/implot.git
+    GIT_TAG v1.0
+    GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(implot)
+
 set(IMGUI_DIR ${imgui_SOURCE_DIR})
+set(IMPLOT_DIR ${implot_SOURCE_DIR})
 
 configure_file(
     ${CMAKE_SOURCE_DIR}/src/version.hpp.in
@@ -39,11 +48,14 @@ add_executable(spark
     ${IMGUI_DIR}/imgui_widgets.cpp
     ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
     ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+    ${IMPLOT_DIR}/implot.cpp
+    ${IMPLOT_DIR}/implot_items.cpp
 )
 
 target_include_directories(spark PRIVATE
     ${IMGUI_DIR}
     ${IMGUI_DIR}/backends
+    ${IMPLOT_DIR}
     ${GLFW_INCLUDE_DIRS}
     ${CMAKE_BINARY_DIR}/generated
 )
