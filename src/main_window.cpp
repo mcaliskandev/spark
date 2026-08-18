@@ -83,6 +83,9 @@ MainWindow::MainWindow() {
     io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
+
+    tray_indicator.SetQuitCallback(
+        [this]() { glfwSetWindowShouldClose(window, GLFW_TRUE); });
 }
 
 MainWindow::~MainWindow() {
